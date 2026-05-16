@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import {PortableText} from '@portabletext/react'
-import {useMemo, useState} from 'react'
+import {useMemo, useState, useEffect} from 'react'
 import {
   Check,
   X,
@@ -15,8 +15,10 @@ import {
   Globe,
   UserRoundCheck,
 } from 'lucide-react'
+import {client} from '@/lib/sanity.client'
+import {siteContentQuery} from '@/lib/queries'
 import {urlFor} from '@/lib/sanity.image'
-import type {SiteContent} from '@/app/page'
+import type {SiteContent} from '@/lib/types'
 
 const iconMap: Record<string, React.ElementType> = {
   cv: FileText,
@@ -41,9 +43,19 @@ function formatPrice(price: string) {
   return v ? `₹ ${v}` : '₹'
 }
 
-export default function HomeClient({data}: {data: SiteContent}) {
+const fallbackData: SiteContent = {
+  brandName: 'Samvaad', tagline: 'Meaningful Conversations, Lasting Change', aboutBrand: 'Samvaad counselling.', heroTitle: 'Counselling That Brings Clarity, Healing, and Growth', heroSubtitle: 'Safe and supportive space.', founderName: 'Gouri Phatak', founderBio: [], founderImage: null, services: [], testimonials: [], packageAudiences: [], customServices: [], phone: '9619249092', email: 'therapist.gouri@gmail.com', instagram: '', linkedin: ''
+}
+
+export default function HomeClient() {
+  const [data, setData] = useState<SiteContent>(fallbackData)
   const [packageMode, setPackageMode] = useState<'mentoria' | 'custom'>('mentoria')
   const [audienceIndex, setAudienceIndex] = useState(0)
+
+  useEffect(() => {
+    client.fetch<SiteContent>(siteContentQuery).then((d) => { if (d) setData(d) }).catch(() => {})
+  }, [])
+
   const audiences = data?.packageAudiences ?? []
   const safeAudienceIndex = Math.min(audienceIndex, Math.max(audiences.length - 1, 0))
   const activeAudience = audiences[safeAudienceIndex]
@@ -109,26 +121,19 @@ export default function HomeClient({data}: {data: SiteContent}) {
         <section id="packages" className="py-16" style={{background: '#EFF3F9'}}>
           <div className="mx-auto max-w-6xl px-4">
             <h2 className="mb-6 text-3xl font-bold" style={{color: brand.navy}}>Packages</h2>
-
             <div className="mb-4 grid grid-cols-2 gap-2 rounded-xl border bg-white p-2">
               <button onClick={() => setPackageMode('mentoria')} className="rounded-md py-2 text-sm font-semibold" style={packageMode === 'mentoria' ? {background: brand.blueDeep, color: 'white'} : {color: brand.blueDeep}}>Mentoria&apos;s Plans</button>
               <button onClick={() => setPackageMode('custom')} className="rounded-md py-2 text-sm font-semibold" style={packageMode === 'custom' ? {background: brand.blueDeep, color: 'white'} : {color: brand.blueDeep}}>Customise Your Mentorship Plan</button>
             </div>
-
             {packageMode === 'mentoria' ? (
               <>
                 <div className="mb-8 grid gap-2 md:grid-cols-4">
                   {audiences.map((audience, idx) => (
-                    <button key={audience.label} onClick={() => setAudienceIndex(idx)} className="rounded-md border py-3 text-center font-semibold" style={idx === safeAudienceIndex ? {background: brand.blueDeep, borderColor: brand.blueDeep, color: 'white'} : {color: brand.blueDeep}}>
-                      {audience.label}
-                    </button>
+                    <button key={audience.label} onClick={() => setAudienceIndex(idx)} className="rounded-md border py-3 text-center font-semibold" style={idx === safeAudienceIndex ? {background: brand.blueDeep, borderColor: brand.blueDeep, color: 'white'} : {color: brand.blueDeep}}>{audience.label}</button>
                   ))}
                 </div>
-
                 {activeAudience ? (
                   <div className="relative mb-10">
-                    <div className="pointer-events-none absolute left-2 top-20 h-44 w-44 rounded-full bg-[#F0C808]" />
-                    <div className="pointer-events-none absolute right-6 top-2 h-16 w-16 rounded-full bg-[#E72874]" />
                     <div className="relative grid gap-6 md:grid-cols-2">
                       {planCards.map((plan, idx) => (
                         <article key={plan.name} className="rounded-3xl bg-white p-6 shadow-sm">
@@ -158,9 +163,7 @@ export default function HomeClient({data}: {data: SiteContent}) {
                     const Icon = iconMap[item.icon] || FileText
                     return (
                       <article key={item.title} className="rounded-2xl border border-slate-200 bg-white p-4">
-                        <div className="mb-3 inline-flex h-16 w-16 items-center justify-center rounded-2xl" style={{background: '#E6EEF8'}}>
-                          <Icon className="h-8 w-8" style={{color: brand.blueDeep}} />
-                        </div>
+                        <div className="mb-3 inline-flex h-16 w-16 items-center justify-center rounded-2xl" style={{background: '#E6EEF8'}}><Icon className="h-8 w-8" style={{color: brand.blueDeep}} /></div>
                         <h4 className="mt-3 text-lg font-bold text-slate-800">{item.title}</h4>
                         <p className="font-semibold" style={{color: brand.blueDeep}}>{formatPrice(item.price)}</p>
                         <p className="mt-2 text-sm text-slate-600">{item.description}</p>
@@ -178,10 +181,7 @@ export default function HomeClient({data}: {data: SiteContent}) {
           <h2 className="mb-8 text-3xl font-bold" style={{color: brand.navy}}>Client Voices</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {data?.testimonials?.map((t) => (
-              <blockquote key={t.author} className="rounded-2xl bg-white p-6 shadow-sm">
-                <p className="text-slate-600">“{t.quote}”</p>
-                <footer className="mt-4 font-semibold" style={{color: brand.blueDeep}}>- {t.author}</footer>
-              </blockquote>
+              <blockquote key={t.author} className="rounded-2xl bg-white p-6 shadow-sm"><p className="text-slate-600">“{t.quote}”</p><footer className="mt-4 font-semibold" style={{color: brand.blueDeep}}>- {t.author}</footer></blockquote>
             ))}
           </div>
         </section>
