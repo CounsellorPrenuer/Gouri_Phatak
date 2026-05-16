@@ -34,6 +34,7 @@ jobs:
         env:
           NEXT_PUBLIC_SANITY_PROJECT_ID: epy3w5vk
           NEXT_PUBLIC_SANITY_DATASET: production
+          NEXT_PUBLIC_BASE_PATH: /Gouri_Phatak
         run: npm run build
 
       - name: Setup Pages

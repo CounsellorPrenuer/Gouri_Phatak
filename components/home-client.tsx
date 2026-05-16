@@ -38,13 +38,58 @@ const brand = {
   bgSoft: '#F4F7FB',
 }
 
+const assetBase = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
+function withBase(path: string) {
+  return `${assetBase}${path}`
+}
+
 function formatPrice(price: string) {
   const v = (price || '').replace(/₹/g, '').replace(/\?/g, '').trim()
   return v ? `₹ ${v}` : '₹'
 }
 
 const fallbackData: SiteContent = {
-  brandName: 'Samvaad', tagline: 'Meaningful Conversations, Lasting Change', aboutBrand: 'Samvaad counselling.', heroTitle: 'Counselling That Brings Clarity, Healing, and Growth', heroSubtitle: 'Safe and supportive space.', founderName: 'Gouri Phatak', founderBio: [], founderImage: null, services: [], testimonials: [], packageAudiences: [], customServices: [], phone: '9619249092', email: 'therapist.gouri@gmail.com', instagram: '', linkedin: ''
+  brandName: 'Samvaad',
+  tagline: 'Meaningful Conversations, Lasting Change',
+  aboutBrand: 'Samvaad is a counseling practice by psychologist Ms Gouri Phatak, built on the power of meaningful conversations.',
+  heroTitle: 'Counselling That Brings Clarity, Healing, and Growth',
+  heroSubtitle: 'Samvaad is a safe and supportive space where you can express yourself freely and move towards emotional well-being.',
+  founderName: 'Gouri Phatak',
+  founderBio: [],
+  founderImage: null,
+  services: [
+    {title: 'Mental Healing', description: 'Helping individuals heal from stress, anxiety, emotional pain, and life challenges through compassionate counselling.'},
+    {title: 'Career Counseling', description: 'Guiding students and professionals to discover the right career path with assessments and personalized guidance.'},
+    {title: 'Personal Growth', description: 'Supporting self-awareness, confidence, emotional strength, and life skills for a healthier and calmer mind.'},
+  ],
+  testimonials: [
+    {quote: 'I felt heard without being judged. Gradually, I became more confident and emotionally stable.', author: 'Mr. Santosh Kamble, Akole'},
+    {quote: 'I learned how to manage my emotions and look at life more positively. It made a big difference.', author: 'Ms. Farjana Khatun, Kolkata'},
+    {quote: 'Career counselling helped me understand my interests and choose my path with confidence.', author: 'Ms. Anushka Sarkar, CBSE 12th Grade'},
+  ],
+  packageAudiences: [
+    {
+      label: '8-9 Students',
+      leftPlan: {tier: 'Standard', name: 'Discover', price: '5,500', buttonText: 'BUY NOW', features: [{text: 'Psychometric assessment to measure your interests', included: true}, {text: '1 career counselling session', included: true}, {text: 'Lifetime access to Knowledge Gateway', included: true}, {text: 'Invites to live webinars by industry experts', included: true}, {text: 'Customised reports after each session', included: false}]},
+      rightPlan: {tier: 'Premium', name: 'Discover plus+', price: '15,000', buttonText: 'BUY NOW', features: [{text: 'Psychometric assessments to measure interests and abilities', included: true}, {text: '8 career counselling sessions', included: true}, {text: 'Lifetime access to Knowledge Gateway', included: true}, {text: 'Invites to live webinars by industry experts', included: true}, {text: 'Customised reports after each session', included: true}]},
+    },
+    {
+      label: '10-12 Students',
+      leftPlan: {tier: 'Standard', name: 'Achieve Online', price: '5,999', buttonText: 'BUY NOW', features: [{text: 'Psychometric assessment', included: true}, {text: '1 career counselling session', included: true}, {text: 'Lifetime access to Knowledge Gateway', included: true}]},
+      rightPlan: {tier: 'Premium', name: 'Achieve Plus+', price: '10,599', buttonText: 'BUY NOW', features: [{text: 'Psychometric assessment', included: true}, {text: '4 career counselling sessions', included: true}, {text: 'Lifetime access to Knowledge Gateway', included: true}]},
+    },
+  ],
+  customServices: [
+    {title: 'CV Building', price: '2000', description: 'Build your CV to stand out from the crowd and increase interview chances.', icon: 'cv', buttonText: 'BUY NOW'},
+    {title: 'LinkedIn Profile Building', price: '2000', description: 'Revamp your LinkedIn profile with expert recommendations.', icon: 'linkedin', buttonText: 'BUY NOW'},
+    {title: 'Career Report', price: '2500', description: 'Detailed psychometric report for interests, personality and abilities.', icon: 'report', buttonText: 'BUY NOW'},
+    {title: 'Interview Prep Session', price: '2000', description: 'Ace upcoming interviews with guidance from top HR experts.', icon: 'interview', buttonText: 'BUY NOW'},
+  ],
+  phone: '9619249092',
+  email: 'therapist.gouri@gmail.com',
+  instagram: 'https://www.instagram.com/samvaad90?igsh=NjFhbGYzMHZjenI2',
+  linkedin: 'https://www.linkedin.com/in/gouri-phatak-3556a312',
 }
 
 export default function HomeClient() {
@@ -70,7 +115,7 @@ export default function HomeClient() {
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Logo" width={40} height={40} className="rounded-full" />
+            <Image src={withBase('/logo.png')} alt="Logo" width={40} height={40} className="rounded-full" />
             <span className="font-semibold" style={{color: brand.navy}}>{data?.brandName ?? 'Samvaad'}</span>
           </div>
           <div className="flex flex-wrap items-center gap-4 text-sm font-medium" style={{color: brand.navy}}>
@@ -95,7 +140,7 @@ export default function HomeClient() {
 
         <section id="founder" className="mx-auto max-w-6xl px-4 py-16">
           <div className="grid gap-8 rounded-3xl bg-white p-8 shadow-sm md:grid-cols-[280px_1fr]">
-            <Image src={data?.founderImage ? urlFor(data.founderImage).width(280).height(320).url() : '/founder.jpeg'} alt={data?.founderName || 'Founder'} width={280} height={320} className="h-[320px] w-[280px] rounded-2xl object-cover" />
+            <Image src={data?.founderImage ? urlFor(data.founderImage).width(280).height(320).url() : withBase('/founder.jpeg')} alt={data?.founderName || 'Founder'} width={280} height={320} className="h-[320px] w-[280px] rounded-2xl object-cover" />
             <div>
               <p className="text-sm uppercase tracking-[0.2em]" style={{color: brand.green}}>About Founder</p>
               <h2 className="mt-2 mb-4 text-3xl font-bold" style={{color: brand.navy}}>{data?.founderName}</h2>
