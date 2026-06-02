@@ -52,6 +52,12 @@ const brand = {
   white: '#FFFFFF',
 }
 
+const assetBase = process.env.NEXT_PUBLIC_BASE_PATH || ''
+
+function withBase(path: string) {
+  return `${assetBase}${path}`
+}
+
 function formatPrice(price: string) {
   const v = (price || '').replace(/₹/g, '').replace(/\?/g, '').trim()
   return v ? `₹ ${v}` : '₹'
@@ -275,7 +281,7 @@ export default function HomeClient() {
       <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur transition-all duration-300">
         <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
-            <Image src="/logo.png" alt="Logo" width={45} height={45} className="rounded-full shadow-sm text-xs" />
+            <Image src={withBase('/logo.png')} alt="Logo" width={45} height={45} className="rounded-full shadow-sm text-xs" />
             <div className="flex flex-col">
               <span className="font-bold text-lg leading-none tracking-wide" style={{color: brand.navy}}>{data.brandName}</span>
               <span className="text-[10px] uppercase tracking-widest mt-1 opacity-70" style={{color: brand.blueDeep}}>Career & Personal Growth</span>
@@ -320,7 +326,7 @@ export default function HomeClient() {
           <div className="relative flex justify-center">
             <div className="absolute inset-0 bg-gradient-to-tr from-emerald-50 to-blue-50 rounded-3xl -rotate-3 scale-95 -z-10" />
             <Image 
-              src="/founder.jpeg" 
+              src={withBase('/founder.jpeg')} 
               alt={data.founderName || 'Founder'} 
               width={450} 
               height={450} 
@@ -334,7 +340,7 @@ export default function HomeClient() {
           <div className="grid gap-12 rounded-3xl bg-white p-8 md:p-12 shadow-sm border border-slate-100 md:grid-cols-[300px_1fr]">
             <div className="flex flex-col items-center md:items-start gap-4">
               <Image 
-                src="/founder.jpeg" 
+                src={withBase('/founder.jpeg')} 
                 alt={data.founderName || 'Founder'} 
                 width={300} 
                 height={350} 
